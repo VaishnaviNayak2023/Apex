@@ -84,7 +84,7 @@ npm run build
 The root `render.yaml` Blueprint defines two free Docker services in Singapore:
 `apexa-api` (FastAPI) and `apexa-web` (Next.js). Deploy from
 [Render Blueprints](https://dashboard.render.com/blueprints/new) by selecting
-**New → Blueprint**, connecting `VaishnaviNayak2023/Apexa`, and deploying the
+**New → Blueprint**, connecting `VaishnaviNayak2023/Apex`, and deploying the
 Blueprint from `main`.
 
 The Blueprint creates a random `DASHBOARD_API_TOKEN` on the API and passes it
