@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sqlite3
+import hmac
 from datetime import date, datetime, timedelta, timezone
 from functools import lru_cache
 from threading import Lock
@@ -14,6 +15,7 @@ import pandas as pd
 import requests
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from src.cleaning import clean_laps
@@ -43,6 +45,23 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def require_dashboard_token(request, call_next):
+    expected_token = os.environ.get("DASHBOARD_API_TOKEN")
+    if (
+        expected_token
+        and request.url.path.startswith("/api/")
+        and request.url.path != "/api/health"
+    ):
+        supplied_token = request.headers.get("x-dashboard-api-token", "")
+        if not hmac.compare_digest(expected_token, supplied_token):
+            return JSONResponse(
+                status_code=401,
+                content={"detail": "A valid dashboard service token is required."},
+            )
+    return await call_next(request)
 
 
 @lru_cache(maxsize=12)

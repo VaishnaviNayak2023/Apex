@@ -79,32 +79,37 @@ npm run build
 - `api/main.py` — FastAPI endpoints for race data and strategy simulations.
 - `src/` — FastF1/OpenF1 loading, lap cleaning, feature engineering, model training and simulation.
 
-## Deploy to Render
+## Deploy to Render (free, ephemeral)
 
-The root `render.yaml` Blueprint defines both Docker services in Singapore:
-`apexa-api` (FastAPI) and `apexa-web` (Next.js). To deploy:
+The root `render.yaml` Blueprint defines two free Docker services in Singapore:
+`apexa-api` (FastAPI) and `apexa-web` (Next.js). Deploy from
+[Render Blueprints](https://dashboard.render.com/blueprints/new) by selecting
+**New → Blueprint**, connecting `VaishnaviNayak2023/Apexa`, and deploying the
+Blueprint from `main`.
 
-1. Sign in to [Render](https://dashboard.render.com/), choose **New → Blueprint**,
-   connect `VaishnaviNayak2023/Apexa`, and deploy the Blueprint from `main`.
-2. During setup, enter `F1_USERNAME` and `F1_PASSWORD` as API-service secrets
-   if you want FastF1. These are optional; public OpenF1 historical timing
-   works without them. Never add these credentials to GitHub or the web service.
-3. Review the selected plans and persistent disk charge before confirming
-   creation. The Blueprint uses paid Starter services and a 5 GB disk mounted
-   at `/app/data`; Render disks are not available on free web services.
-4. Wait for `apexa-api` health check `/api/health` and `apexa-web` health check
-   `/` to pass, then open the web service's public `onrender.com` URL.
+The Blueprint creates a random `DASHBOARD_API_TOKEN` on the API and passes it
+to the web service. The API requires this token for its `/api/*` routes except
+the public health check; the Next.js server adds it when proxying requests. The
+API service URL is configured as `https://apexa-api.onrender.com`. If Render
+assigns a different API URL, update the web service's `RACE_API_URL` to that
+public API URL. If you want FastF1, add `F1_USERNAME` and `F1_PASSWORD` as
+API-service secrets in Render after deployment; public OpenF1 historical data
+works without them. Do not send or commit account credentials to GitHub.
 
-The API is deliberately configured as one instance because the SQLite
-registry/WAL and filesystem caches require a single writer. The API disk keeps
-the registry, fetched timing cache, model artifacts, and forecast ledger
-across deploys. The frontend receives the API's private host-and-port reference
-through Render Blueprint service discovery. The API listens on Render's
-injected `PORT` and binds to `0.0.0.0`.
+**Free-tier limitations:** both services use ephemeral filesystems, so the API
+registry, downloaded timing cache, model artifacts, and prediction ledger can
+be lost on restart, deploy, or idle spin-down. Render spins free web services
+down after 15 minutes without traffic; waking one can take about a minute.
+The API is exposed through its public Render URL because free web services
+cannot receive private-network requests. Its data-changing/API routes are
+protected by the generated service token, and only the health endpoint is
+public. This setup is suitable for trying the dashboard, not for durable
+production storage or reliable scheduled forecasts.
 
-Keep the API on a plan with enough memory for historical model training; if
-training is killed for memory pressure, scale up that service. Back up
-important application data separately from the service disk.
+For retained SQLite/cache/model data, the API needs a paid Render service with
+a persistent disk at `/app/data`, or the app needs to be changed to use an
+external persistent database/object store. The free Blueprint intentionally
+does not create billable resources.
 
 ## Race registry, predictions, and scorecards
 

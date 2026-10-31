@@ -2,16 +2,12 @@ services:
   - type: web
     name: apexa-api
     runtime: docker
-    plan: starter
+    plan: free
     region: singapore
     dockerfilePath: ./Dockerfile.api
     dockerContext: .
     numInstances: 1
     healthCheckPath: /api/health
-    disk:
-      name: apexa-api-data
-      mountPath: /app/data
-      sizeGB: 5
     envVars:
       - key: RACE_STORAGE_DIR
         value: /app/data
@@ -23,22 +19,22 @@ services:
         value: /app/data/predictions/ledger
       - key: ALLOW_DEMO_DATA
         value: "false"
-      - key: F1_USERNAME
-        sync: false
-      - key: F1_PASSWORD
-        sync: false
+      - key: DASHBOARD_API_TOKEN
+        generateValue: true
 
   - type: web
     name: apexa-web
     runtime: docker
-    plan: starter
+    plan: free
     region: singapore
     dockerfilePath: ./Dockerfile.web
     dockerContext: .
     healthCheckPath: /
     envVars:
       - key: RACE_API_URL
+        value: https://apexa-api.onrender.com
+      - key: DASHBOARD_API_TOKEN
         fromService:
           type: web
           name: apexa-api
-          property: hostport
+          envVarKey: DASHBOARD_API_TOKEN

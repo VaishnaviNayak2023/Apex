@@ -38,9 +38,13 @@ async function forward(request: NextRequest, path: string[]) {
 
   const destination = new URL(`/api/${endpoint}${request.nextUrl.search}`, backend);
   try {
+    const headers: Record<string, string> = {};
+    const apiToken = process.env.DASHBOARD_API_TOKEN;
+    if (apiToken) headers["x-dashboard-api-token"] = apiToken;
+    if (request.method === "POST") headers["Content-Type"] = "application/json";
     const response = await fetch(destination, {
       method: request.method,
-      headers: request.method === "POST" ? { "Content-Type": "application/json" } : undefined,
+      headers,
       body: request.method === "POST" ? await request.text() : undefined,
       cache: "no-store",
       signal: AbortSignal.timeout(120_000),

@@ -15,6 +15,22 @@ def test_health_endpoint():
     assert response.json()["season"] == date.today().year
 
 
+def test_dashboard_token_protects_api_but_not_health(monkeypatch):
+    from api import main
+
+    monkeypatch.setenv("DASHBOARD_API_TOKEN", "test-dashboard-token")
+    monkeypatch.setattr(main, "list_registry_predictions", lambda _year: [])
+
+    assert client.get("/api/health").status_code == 200
+    assert client.get("/api/predictions").status_code == 401
+    authorized = client.get(
+        "/api/predictions",
+        headers={"x-dashboard-api-token": "test-dashboard-token"},
+    )
+    assert authorized.status_code == 200
+    assert authorized.json()["predictions"] == []
+
+
 def test_strategy_request_rejects_invalid_stop_count():
     response = client.post("/api/strategies", json={"stops": 3})
     assert response.status_code == 422
