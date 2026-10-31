@@ -3,7 +3,7 @@
 import {
   Activity, ArrowDownRight, ArrowUpRight, BarChart3, BookOpenCheck,
   CalendarDays, CircleHelp, FileChartColumnIncreasing, Flag, Gauge, Layers3,
-  LoaderCircle, Menu, Play, RotateCcw, Settings2, ShieldCheck, Timer, Trophy, X,
+  LoaderCircle, Menu, Moon, Play, RotateCcw, Settings2, ShieldCheck, Sun, Timer, Trophy, X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -156,6 +156,7 @@ function trackStatusLabel(status?: string | null) {
 
 export default function Dashboard() {
   const [page, setPage] = useState<PageName>("Overview");
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [mobileNav, setMobileNav] = useState(false);
   const [race, setRace] = useState<RaceData | null>(null);
   const currentYear = new Date().getFullYear();
@@ -211,6 +212,21 @@ export default function Dashboard() {
   const [backtests, setBacktests] = useState<BacktestRun[] | null>(null);
   const [reportsLoading, setReportsLoading] = useState(false);
   const [reportsError, setReportsError] = useState("");
+
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem("apex-theme");
+    if (savedTheme === "light" || savedTheme === "dark") {
+      setTheme(savedTheme);
+    } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
+      setTheme("light");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    window.localStorage.setItem("apex-theme", nextTheme);
+  };
 
   const loadEvents = useCallback(async (year: number, refresh = false) => {
     setEventsLoading(true);
@@ -605,10 +621,12 @@ export default function Dashboard() {
   const qualifyingReady = Boolean(forecastDetail?.race.qualifyingStartUtc)
     && clock >= new Date(forecastDetail?.race.qualifyingStartUtc ?? 0).getTime() + 2 * 60 * 60 * 1000
     && countdownMs !== null && countdownMs > 0;
-  const chartTooltip = { contentStyle: { background: "#171b24", border: "1px solid #2a303d", borderRadius: 10, color: "#f3f5f8" }, itemStyle: { color: "#f3f5f8" }, labelStyle: { color: "#9ba3b4" } };
+  const chartTooltip = theme === "dark"
+    ? { contentStyle: { background: "#171b24", border: "1px solid #2a303d", borderRadius: 10, color: "#f3f5f8" }, itemStyle: { color: "#f3f5f8" }, labelStyle: { color: "#9ba3b4" } }
+    : { contentStyle: { background: "#ffffff", border: "1px solid #d5dce7", borderRadius: 10, color: "#172033" }, itemStyle: { color: "#172033" }, labelStyle: { color: "#536176" } };
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" data-theme={theme}>
       <aside className={`sidebar ${mobileNav ? "sidebar-open" : ""}`}>
         <div className="brand"><div className="brand-mark"><Flag size={19} /></div><div><strong>APEX<span> / STRATEGY</span></strong><small>RACE INTELLIGENCE</small></div><button className="close-nav" onClick={() => setMobileNav(false)} aria-label="Close navigation"><X size={18} /></button></div>
         <div className="race-select-label">EVENT SELECTOR</div>
@@ -636,7 +654,7 @@ export default function Dashboard() {
         <header className="topbar">
           <button className="mobile-menu icon-button" onClick={() => setMobileNav(true)} aria-label="Open navigation"><Menu size={19} /></button>
           <div className="breadcrumbs"><span>WORKSPACE</span><b>/</b><strong>{page.toUpperCase()}</strong></div>
-          <div className="topbar-right"><span className="session-badge"><span />{selectedYear} SEASON</span><button className="icon-button refresh-button" onClick={() => { void loadEvents(selectedYear, true); if (selectedRace) void loadRace(true); }} aria-label="Refresh race and calendar data" title="Refresh current calendar and race data"><RotateCcw size={15} /></button><span className="topbar-divider" /><span className="avatar small-avatar">AP</span></div>
+          <div className="topbar-right"><span className="session-badge"><span />{selectedYear} SEASON</span><button className="icon-button theme-toggle" onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`} title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}>{theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}<span>{theme === "dark" ? "Light" : "Dark"}</span></button><button className="icon-button refresh-button" onClick={() => { void loadEvents(selectedYear, true); if (selectedRace) void loadRace(true); }} aria-label="Refresh race and calendar data" title="Refresh current calendar and race data"><RotateCcw size={15} /></button></div>
         </header>
 
         <div className="page-wrap">
@@ -644,12 +662,60 @@ export default function Dashboard() {
           {error && <div className="notice error-notice"><span>{error}</span><button onClick={() => { void loadEvents(selectedYear, true); if (selectedRace) void loadRace(true); }}>Retry</button></div>}
           {race?.loadWarning && <div className="notice data-notice"><Activity size={16} /><span>{race.loadWarning}{race.source === "Demo data" ? " This is synthetic demonstration data, not official race timing." : ""}</span></div>}
 
-          <div className="page-title-row">
+          {page !== "Overview" && <div className="page-title-row">
             <div className="title-kicker"><span className="kicker-line" />{selectedYear} FIA FORMULA ONE WORLD CHAMPIONSHIP</div>
-            <h1>{page === "Overview" ? <>Find the <span>winning edge.</span></> : page}</h1>
-            <p className="page-subtitle">{page === "Overview" ? "Race strategy, backed by data. Explore tyre behaviour, model performance, and simulated race outcomes." : page === "Strategy Simulator" ? "Stress-test pit windows and compound choices against predicted full-race pace." : page === "Race Calendar" ? "Explore the generated championship registry from 1950 through the current season." : page === "Next Race Prediction" ? "A provisional historical-data forecast with a visible cutoff, stage, and input provenance." : page === "Prediction Ledger" ? "Review pre-race calls, timestamps, model versions, and post-race scores." : page === "Race Reports" ? "Compare locked predictions to official race outcomes and review season-level scoring." : `${selectedRace || "Select a Grand Prix"} · ${race?.totalLaps ?? "—"} laps · Data-led ${page.toLowerCase()} for race strategy.`}</p>
-            {page === "Overview" && <button className="primary-button" onClick={() => setPage("Strategy Simulator")}><Play size={15} fill="currentColor" />Open strategy simulator<ArrowUpRight size={15} /></button>}
-          </div>
+            <h1>{page}</h1>
+            <p className="page-subtitle">{page === "Strategy Simulator" ? "Stress-test pit windows and compound choices against predicted full-race pace." : page === "Race Calendar" ? "Explore the generated championship registry from 1950 through the current season." : page === "Next Race Prediction" ? "A provisional historical-data forecast with a visible cutoff, stage, and input provenance." : page === "Prediction Ledger" ? "Review pre-race calls, timestamps, model versions, and post-race scores." : page === "Race Reports" ? "Compare locked predictions to official race outcomes and review season-level scoring." : `${selectedRace || "Select a Grand Prix"} · ${race?.totalLaps ?? "—"} laps · Data-led ${page.toLowerCase()} for race strategy.`}</p>
+          </div>}
+
+          {page === "Overview" && <section className="home-hero" aria-labelledby="home-heading">
+            <div className="home-hero-copy">
+              <div className="home-eyebrow"><span className="home-live-dot" /> APEX RACE INTELLIGENCE <span className="eyebrow-divider">/</span> {selectedYear} SEASON</div>
+              <h1 id="home-heading"><span className="home-heading-line">Every second has</span>{" "}<span className="home-heading-line"><i>a strategy.</i></span></h1>
+              <p>Explore race pace, tyre life, and pit windows with data-led simulations. Find the move that puts you ahead.</p>
+              <div className="home-hero-actions">
+                <button className="primary-button" onClick={() => setPage("Strategy Simulator")}><Play size={15} fill="currentColor" />Launch race simulator<ArrowUpRight size={15} /></button>
+                <button className="hero-secondary-button" onClick={() => setPage("Race Explorer")}>Explore race data<ArrowUpRight size={14} /></button>
+              </div>
+              <div className="hero-trust"><ShieldCheck size={15} /><span>Historical timing and explicit simulations</span><i /></div>
+            </div>
+            <div className="home-hero-visual" aria-label="Illustration of a Formula racing car on a circuit">
+              <div className="visual-topline"><span><i /> STRATEGY SIMULATION</span><span>NO. {String((events.find((event) => event.name === selectedRace)?.round ?? 1)).padStart(2, "0")}</span></div>
+              <svg className="track-art" viewBox="0 0 640 330" role="img" aria-labelledby="track-title">
+                <title id="track-title">Stylized Formula race car and circuit</title>
+                <defs>
+                  <linearGradient id="car-red" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stopColor="#ff5c55" /><stop offset="1" stopColor="#ad1118" /></linearGradient>
+                  <linearGradient id="track-glow" x1="0" x2="1"><stop offset="0" stopColor="#e51b23" stopOpacity=".05" /><stop offset=".55" stopColor="#ff343c" stopOpacity=".8" /><stop offset="1" stopColor="#ff343c" stopOpacity=".08" /></linearGradient>
+                  <filter id="car-shadow" x="-30%" y="-40%" width="160%" height="180%"><feGaussianBlur stdDeviation="9" /></filter>
+                </defs>
+                <path className="track-line track-line-back" d="M66 190 C93 86 165 69 226 91 C287 113 279 156 337 158 C394 160 416 99 480 105 C546 111 579 181 552 226 C522 277 452 281 397 255 C334 225 322 204 265 218 C205 233 149 285 99 256 C64 236 55 215 66 190Z" />
+                <path className="track-line track-line-glow" d="M66 190 C93 86 165 69 226 91 C287 113 279 156 337 158 C394 160 416 99 480 105 C546 111 579 181 552 226 C522 277 452 281 397 255 C334 225 322 204 265 218 C205 233 149 285 99 256 C64 236 55 215 66 190Z" />
+                <path className="track-line track-line-dash" d="M66 190 C93 86 165 69 226 91 C287 113 279 156 337 158 C394 160 416 99 480 105 C546 111 579 181 552 226 C522 277 452 281 397 255 C334 225 322 204 265 218 C205 233 149 285 99 256 C64 236 55 215 66 190Z" />
+                <g className="car-illustration" transform="translate(319 184) rotate(-17)">
+                  <ellipse cx="0" cy="40" rx="76" ry="18" fill="#ed2028" opacity=".3" filter="url(#car-shadow)" />
+                  <rect x="-47" y="-35" width="23" height="15" rx="5" fill="#11151b" stroke="#626b79" strokeWidth="2" />
+                  <rect x="24" y="-35" width="23" height="15" rx="5" fill="#11151b" stroke="#626b79" strokeWidth="2" />
+                  <rect x="-51" y="23" width="25" height="16" rx="5" fill="#11151b" stroke="#626b79" strokeWidth="2" />
+                  <rect x="26" y="23" width="25" height="16" rx="5" fill="#11151b" stroke="#626b79" strokeWidth="2" />
+                  <path d="M-65 3 L-47 -4 L-32 -22 L-11 -28 L0 -47 L12 -27 L31 -21 L47 -3 L65 3 L68 12 L42 15 L29 28 L-29 28 L-42 15 L-68 12Z" fill="url(#car-red)" stroke="#ff7774" strokeWidth="1.5" />
+                  <path d="M-15 -24 Q0 -42 15 -24 L11 -11 L-11 -11Z" fill="#252c38" stroke="#ffaaa4" strokeWidth="1.5" />
+                  <path d="M-10 -25 Q0 -32 10 -25" fill="none" stroke="#d7e6f4" strokeWidth="2" opacity=".85" />
+                  <path d="M-37 4 L-24 0 L-21 7 L-36 11Z M37 4 L24 0 L21 7 L36 11Z" fill="#ffcf64" />
+                  <path d="M-64 4 L-83 2 L-82 14 L-64 12 M64 4 L83 2 L82 14 L64 12" fill="#e52b32" stroke="#ff7774" strokeWidth="2" />
+                  <path d="M-22 26 L-29 39 L29 39 L22 26Z" fill="#d51d25" />
+                  <path d="M-35 42 L35 42 L40 48 L-40 48Z" fill="#ff4a50" />
+                  <circle cx="0" cy="5" r="3" fill="#ffe7a0" />
+                </g>
+                <circle className="track-marker" cx="66" cy="190" r="5" />
+                <text x="54" y="177" className="track-label">START</text>
+              </svg>
+              <div className="visual-telemetry">
+                <div><span>SELECTED GRAND PRIX</span><strong>{selectedRace || "Season loading"}</strong></div>
+                <div><span>RACE DISTANCE</span><strong>{race ? `${race.totalLaps} laps` : "Ready to simulate"}</strong></div>
+                <div className="telemetry-stop-control"><span>STRATEGY PLAN</span><div className="hero-stop-toggle" aria-label="Choose simulated pit stops"><button aria-pressed={stops === 1} className={stops === 1 ? "active" : ""} onClick={() => setStops(1)}>1 stop</button><button aria-pressed={stops === 2} className={stops === 2 ? "active" : ""} onClick={() => setStops(2)}>2 stops</button></div></div>
+              </div>
+            </div>
+          </section>}
 
           {page === "Race Calendar" && <div className="content-stack registry-view">
             <Card className="ranking-card">
