@@ -4,6 +4,8 @@ An educational F1 strategy lab. A Python model learns lap-time behaviour from
 FastF1 and OpenF1 data, simulates dry 1-stop and 2-stop strategies, and serves
 results to a Next.js and React dashboard.
 
+## Live Deploy
+Link: https://apexa-web.onrender.com/
 ## Run locally
 
 ### Install once
