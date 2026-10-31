@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: apexa-api
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./Dockerfile.api
+    dockerContext: .
+    numInstances: 1
+    healthCheckPath: /api/health
+    disk:
+      name: apexa-api-data
+      mountPath: /app/data
+      sizeGB: 5
+    envVars:
+      - key: RACE_STORAGE_DIR
+        value: /app/data
+      - key: RACE_DB_PATH
+        value: /app/data/processed/race_registry.sqlite
+      - key: RACE_MODEL_DIR
+        value: /app/data/models
+      - key: RACE_LEDGER_DIR
+        value: /app/data/predictions/ledger
+      - key: ALLOW_DEMO_DATA
+        value: "false"
+      - key: F1_USERNAME
+        sync: false
+      - key: F1_PASSWORD
+        sync: false
+
+  - type: web
+    name: apexa-web
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./Dockerfile.web
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: RACE_API_URL
+        fromService:
+          type: web
+          name: apexa-api
+          property: hostport

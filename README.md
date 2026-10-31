@@ -79,55 +79,32 @@ npm run build
 - `api/main.py` — FastAPI endpoints for race data and strategy simulations.
 - `src/` — FastF1/OpenF1 loading, lap cleaning, feature engineering, model training and simulation.
 
-## Deploy to Railway
+## Deploy to Render
 
-The app is a monorepo with two independently deployed Railway services. Deploy
-the same repository twice, using the project root as the build context:
+The root `render.yaml` Blueprint defines both Docker services in Singapore:
+`apexa-api` (FastAPI) and `apexa-web` (Next.js). To deploy:
 
-Before connecting a repository, make sure it contains only this project. In the
-current workstation, the Git root is `C:\Users\prash` and its `origin` points
-to a different application; do not connect or push that home-directory
-repository to Railway. Create/use a dedicated repository for this project,
-with `package.json` and both Dockerfiles at its root.
+1. Sign in to [Render](https://dashboard.render.com/), choose **New → Blueprint**,
+   connect `VaishnaviNayak2023/Apexa`, and deploy the Blueprint from `main`.
+2. During setup, enter `F1_USERNAME` and `F1_PASSWORD` as API-service secrets
+   if you want FastF1. These are optional; public OpenF1 historical timing
+   works without them. Never add these credentials to GitHub or the web service.
+3. Review the selected plans and persistent disk charge before confirming
+   creation. The Blueprint uses paid Starter services and a 5 GB disk mounted
+   at `/app/data`; Render disks are not available on free web services.
+4. Wait for `apexa-api` health check `/api/health` and `apexa-web` health check
+   `/` to pass, then open the web service's public `onrender.com` URL.
 
-1. Create an **API** service and set its Dockerfile path to `Dockerfile.api`.
-   Set `PORT=8000` and the health-check path to `/api/health`.
-2. Attach a Railway volume to the API service at `/app/data`. Keep this service
-   at one replica: SQLite and its WAL files require a single writer and the
-   volume is not shared across replicas.
-3. Set these API service variables:
+The API is deliberately configured as one instance because the SQLite
+registry/WAL and filesystem caches require a single writer. The API disk keeps
+the registry, fetched timing cache, model artifacts, and forecast ledger
+across deploys. The frontend receives the API's private host-and-port reference
+through Render Blueprint service discovery. The API listens on Render's
+injected `PORT` and binds to `0.0.0.0`.
 
-   ```text
-   RACE_STORAGE_DIR=/app/data
-   RACE_DB_PATH=/app/data/processed/race_registry.sqlite
-   RACE_MODEL_DIR=/app/data/models
-   RACE_LEDGER_DIR=/app/data/predictions/ledger
-   ALLOW_DEMO_DATA=false
-   F1_USERNAME=<set as a Railway secret if using FastF1>
-   F1_PASSWORD=<set as a Railway secret if using FastF1>
-   ```
-
-   FastF1 credentials are optional; public OpenF1 historical data remains
-   available without them. Never put credentials in the repository, Docker
-   image, or frontend service variables.
-4. Create a **web** service from the same repository and set its Dockerfile
-   path to `Dockerfile.web`. Set `RACE_API_URL` to
-   `http://api.railway.internal:8000` (the API service must be named `api` and
-   listen on port 8000). Generate a Railway public domain for this service.
-5. Deploy the API first, confirm its `/api/health` check passes, then deploy
-   the web service. Open the public web domain and verify the calendar and
-   historical race data load.
-
-Railway build configuration must use the repository/project root as the build
-context; the Dockerfiles are at that root. Only the API needs the persistent
-volume. Its database, downloaded timing cache, forecast model artifacts, and
-prediction ledger are configured under `/app/data`, so they survive API
-releases. Back up this volume separately; it is not a substitute for backups.
-The web container receives no F1 credentials.
-
-The API and frontend Dockerfiles can also be built locally with Docker. The
-frontend build uses Next.js standalone output; the API listens on Railway's
-`PORT` and binds to `0.0.0.0`.
+Keep the API on a plan with enough memory for historical model training; if
+training is killed for memory pressure, scale up that service. Back up
+important application data separately from the service disk.
 
 ## Race registry, predictions, and scorecards
 

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const backend = process.env.RACE_API_URL ?? "http://127.0.0.1:8000";
+const configuredBackend = process.env.RACE_API_URL ?? "http://127.0.0.1:8000";
+const backend = /^https?:\/\//i.test(configuredBackend)
+  ? configuredBackend
+  : `http://${configuredBackend}`;
 const allowedPaths = new Set([
   "backtests",
   "calendar",
