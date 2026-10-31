@@ -18,7 +18,8 @@ body { margin: 0; background: var(--background); color: var(--text); font-family
 button, select, input { font: inherit; }
 button { color: inherit; }
 .app-shell { min-height: 100vh; }
-.sidebar { position: fixed; z-index: 20; inset: 0 auto 0 0; display: flex; width: 246px; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: #3a404b transparent; scrollbar-width: thin; border-right: 1px solid #22262e; background: #101216; padding: 22px 15px 14px; }
+.sidebar { position: fixed; z-index: 20; inset: 0 auto 0 0; display: flex; width: 246px; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; -ms-overflow-style: none; border-right: 1px solid #22262e; background: #101216; padding: 22px 15px 14px; }
+.sidebar::-webkit-scrollbar { display: none; }
 .sidebar > * { flex-shrink: 0; }
 .brand { display: flex; align-items: center; gap: 11px; padding: 1px 5px 30px; }
 .brand-mark { display: grid; width: 37px; height: 37px; place-items: center; border: 1px solid #5b2527; border-radius: 10px; background: #281719; color: #ff5358; }
