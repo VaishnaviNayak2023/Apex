@@ -1,0 +1,188 @@
+{
+  "planHash": "796bc82d286d6795a3f7027f16bf1e881c118d7d30640d0449f56057a9ef0e2f",
+  "phase": "standalone",
+  "recordedAtUtc": "2026-10-31T11:38:49.0448346Z",
+  "retryCount": 0,
+  "resetBaseline": false,
+  "complete": true,
+  "result": {
+    "setupSucceeded": true,
+    "setupDurationMs": 77439,
+    "setupFailureOutput": null,
+    "assertions": [
+      {
+        "name": "typescript-typecheck",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E f1-strategy-lab@1.0.0 typecheck\r\n\u003E tsc --noEmit\r\n\r\n",
+        "durationMs": 5378
+      },
+      {
+        "name": "next-production-build",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E f1-strategy-lab@1.0.0 build\r\n\u003E next build\r\n\r\n   \u25B2 Next.js 15.5.28\r\n   - Environments: .env\r\n\r\n   Creating an optimized production build ...\r\n \u2713 Compiled successfully in 8.2s\r\n   Linting and checking validity of types ...\r\n   Collecting page data ...\r\n   Generating static pages (0/4) ...\r\n   Generating static pages (1/4) \r\n   Generating static pages (2/4) \r\n   Generating static pages (3/4) \r\n \u2713 Generating static pages (4/4)\r\n   Finalizing page optimization ...\r\n   Collecting build traces ...\r\n\r\nRoute (app)                                 Size  First Load JS\r\n\u250C \u25CB /                                     129 kB         232 kB\r\n\u251C \u25CB /_not-found                            996 B         104 kB\r\n\u2514 \u0192 /api/[...path]                         123 B         103 kB\r\n\u002B First Load JS shared by all             103 kB\r\n  \u251C chunks/255-51cc180f6c33fa39.js       46.3 kB\r\n  \u251C chunks/4bd1b696-409494caf8c83275.js  54.2 kB\r\n  \u2514 other shared chunks (total)          2.05 kB\r\n\r\n\r\n\u25CB  (Static)   prerendered as static content\r\n\u0192  (Dynamic)  server-rendered on demand\r\n\r\n",
+        "durationMs": 48925
+      },
+      {
+        "name": "tests-pass",
+        "kind": "process",
+        "verificationMethod": "test-results",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "...................................                                      [100%]\r\n35 passed in 9.96s\r\n",
+        "durationMs": 13055,
+        "testResults": {
+          "testFramework": "unknown",
+          "runnerDetectedFrom": "none",
+          "testsTotal": 0,
+          "testsPassed": 0,
+          "testsFailed": 0,
+          "testsSkipped": 0,
+          "parseFailed": true
+        }
+      },
+      {
+        "name": "frontend-home-200",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n\u003C!DOCTYPE html\u003E\u003Chtml lang=\u0022en\u0022\u003E\u003Chead\u003E\u003Cmeta charSet=\u0022utf-8\u0022/\u003E\u003Cmeta name=\u0022viewport\u0022 content=\u0022width=device-width, initial-scale=1\u0022/\u003E\u003Clink rel=\u0022stylesheet\u0022 href=\u0022/_next/static/css/app/layout.css?v=1793446716933\u0022 data-precedence=\u0022next_static/css/app/layout.css\u0022/\u003E\u003Clink rel=\u0022preload\u0022 as=\u0022script\u0022 fetchPriority=\u0022low\u0022 href=\u0022/_next/static/chunks/webpack.js?v=1793446716933\u0022/\u003E\u003Cscript src=\u0022/_next/static/chunks/main-app.js?v=1793446716933\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/app-pages-internals.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/app/page.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Ctitle\u003EF1 Strategy Lab | Apex\u003C/title\u003E\u003Cmeta name=\u0022description\u0022 content=\u0022Explore tyre degradation, lap-time models, and race strategy simulations.\u0022/\u003E\u003Cscript src=\u0022/_next/static/chunks/polyfills.js\u0022 noModule=\u0022\u0022\u003E\u003C/script\u003E\u003C/head\u003E\u003Cbody\u003E\u003Cdiv hidden=\u0022\u0022\u003E\u003C!--$--\u003E\u003C!--/$--\u003E\u003C/div\u003E\u003Cdiv class=\u0022app-shell\u0022\u003E\u003Caside class=\u0022sidebar \u0022\u003E\u003Cdiv class=\u0022brand\u0022\u003E\u003Cdiv class=\u0022brand-mark\u0022\u003E\u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002219\u0022 height=\u002219\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022none\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-flag\u0022\u003E\u003Cpath d=\u0022M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z\u0022\u003E\u003C/path\u003E\u003Cline x1=\u00224\u0022 x2=\u00224\u0022 y1=\u002222\u0022 y2=\u002215\u0022\u003E\u003C/line\u003E\u003C/svg\u003E\u003C/div\u003E\u003Cdiv\u003E\u003Cstrong\u003EAPEX\u003Cspan\u003E / STRATEGY\u003C/span\u003E\u003C/strong\u003E\u003Csmall\u003ERACE INTELLIGENCE\u003C/small\u003E\u003C/div\u003E\u003Cbutton class=\u0022close-nav\u0022 aria-label=\u0022Close navigation\u0022\u003E\u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002218\u0022 height=\u002218\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022none\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-x\u0022\u003E\u003Cpath d=\u0022M18 6 6 18\u0022\u003E\u003C/path\u003E\u003Cpath d=\u0022m6 6 12 12\u0022\u003E\u003C/path\u003E\u003C/svg\u003E\u003C/button\u003E\u003C/div\u003E\u003Cdiv class=\u0022race-select-label\u0022\u003EEVENT SELECTOR\u003C/div\u003E\u003Cdiv class=\u0022race-selector-fields\u0022\u003E\u003Clabel\u003ESEASON\u003Cselect aria-label=\u0022Season\u0022\u003E\u003Coption value=\u00222026\u0022 selected=\u0022\u0022\u003E2026\u003C!-- --\u003E FIA Formula One Championship\u003C/option\u003E\u003C/select\u003E\u003C/label\u003E\u003Clabel\u003EGRAND PRIX\u003Cselect aria-label=\u0022Grand Prix\u0022 disabled=\u0022\u0022\u003E\u003Coption value=\u0022\u0022 selected=\u0022\u0022\u003ELoading season calendar\u2026\u003C/option\u003E\u003C/select\u003E\u003C/label\u003E\u003C/div\u003E\u003Cdiv class=\u0022nav-caption\u0022\u003EWORKSPACE\u003C/div\u003E\u003Cnav class=\u0022nav-list\u0022 aria-label=\u0022Dashboard sections\u0022\u003E\u003Cbutton class=\u0022nav-item active\u0022\u003E\u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002217\u0022 height=\u002217\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022none\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-gauge\u0022\u003E\u003Cpath d=\u0022m12 14 4-4\u0022\u003E\u003C/path\u003E\u003Cpath d=\u0022M3.34 19a10 10 0 1 1 17.32 0\u0022\u003E\u003C/path\u003E\u003C/svg\u003E\u003Cspan\u003EOverview\u003C/span\u003E\u003C/button\u003E\u003Cbutton class=\u0022nav-item \u0022\u003E\u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002217\u0022 height=\u002217\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022none\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-flag\u0022\u003E\u003Cpath d=\u0022M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z\u0022\u003E\u003C/path\u003E\u003Cline x1=\u00224\u0022 x2=\u00224\u0022 y1=\u002222\u0022 y2=\u002215\u0022\u003E\u003C/line\u003E\u003C/svg\u003E\u003Cspan\u003ERace Explorer\u003C/span\u003E\u003C/button\u003E\u003Cbutton class=\u0022nav-item \u0022\u003E\u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002217\u0022 height=\u002217\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022none\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-activity\u0022\u003E\u003Cpath d=\u0022M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2\u0022\u003E\u003C/path\u003E\u003C/svg\u003E\u003Cspan\u003ETyre Degradation\u003C/span\u003E\u003C/button\u003E\u003Cbutton class=\u0022nav-item \u0022\u003E\u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002217\u0022 height=\u002217\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022none\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-chart-column\u0022\u003E\u003Cpath d=\u0022M3 3v16a2 2 0 0 0 2 2h16\u0022\u003E\u003C/path\u003E\u003Cpath d=\u0022M18 17V9\u0022\u003E\u003C/path\u003E\u003Cpath d=\u0022M13 17V5\u0022\u003E\u003C/path\u003E\u003Cpath d=\u0022M8 17v-3\u0022\u003E\u003C/path\u003E\u003C/svg\u003E\u003Cspan\u003EModel Performance\u003C/span\u003E\u003C/button\u003E\u003Cbutton class=\u0022nav-item \u0022\u003E\u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002217\u0022 height=\u002217\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022none\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-layers\u0022\u003E\u003Cpath d=\u0022M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1\n\u2026[truncated]",
+        "durationMs": 14511
+      },
+      {
+        "name": "same-origin-api-health-200",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n{\u0022status\u0022:\u0022ok\u0022,\u0022season\u0022:2026}\n--- server output ---\n\r\n\u003E f1-strategy-lab@1.0.0 dev\r\n\u003E next dev --hostname 127.0.0.1 --port 3001\r\n\r\n   \u25B2 Next.js 15.5.28\r\n   - Local:        http://127.0.0.1:3001\r\n   - Network:      http://127.0.0.1:3001\r\n   - Environments: .env\r\n\r\n \u2713 Starting...\r\n \u2713 Ready in 5s\r\n \u25CB Compiling /api/[...path] ...\r\n \u2713 Compiled /api/[...path] in 1183ms (313 modules)\r\n",
+        "durationMs": 11006
+      }
+    ],
+    "executions": [
+      {
+        "source": "setup[0]",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "ci",
+          "--prefer-offline",
+          "--no-audit",
+          "--no-fund"
+        ],
+        "cwd": "C:\\Users\\prash\\OneDrive\\Desktop\\PROJECTS\\Predictive Race Strategy",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "devServer",
+        "resolvedExecutable": "C:\\Python314\\python.EXE",
+        "args": [
+          "-m",
+          "uvicorn",
+          "api.main:app",
+          "--port",
+          "8001"
+        ],
+        "cwd": "C:\\Users\\prash\\OneDrive\\Desktop\\PROJECTS\\Predictive Race Strategy",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "typescript-typecheck",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "typecheck"
+        ],
+        "cwd": "C:\\Users\\prash\\OneDrive\\Desktop\\PROJECTS\\Predictive Race Strategy",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "next-production-build",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "build"
+        ],
+        "cwd": "C:\\Users\\prash\\OneDrive\\Desktop\\PROJECTS\\Predictive Race Strategy",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "tests-pass",
+        "resolvedExecutable": "C:\\Python314\\python.EXE",
+        "args": [
+          "-m",
+          "pytest",
+          "-q"
+        ],
+        "cwd": "C:\\Users\\prash\\OneDrive\\Desktop\\PROJECTS\\Predictive Race Strategy",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "frontend-home-200",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "dev",
+          "--",
+          "--hostname",
+          "127.0.0.1",
+          "--port",
+          "3002"
+        ],
+        "cwd": "C:\\Users\\prash\\OneDrive\\Desktop\\PROJECTS\\Predictive Race Strategy",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "same-origin-api-health-200",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "dev",
+          "--",
+          "--hostname",
+          "127.0.0.1",
+          "--port",
+          "3001"
+        ],
+        "cwd": "C:\\Users\\prash\\OneDrive\\Desktop\\PROJECTS\\Predictive Race Strategy",
+        "env": {
+          "RACE_API_URL": "http://127.0.0.1:8001"
+        },
+        "prependPath": [],
+        "platform": "win32"
+      }
+    ]
+  }
+}

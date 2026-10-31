@@ -1,0 +1,33 @@
+name: Sync F1 calendar
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: f1-race-pipeline
+  cancel-in-progress: false
+
+jobs:
+  sync-calendar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/cache@v4
+        with:
+          path: |
+            data/raw
+            data/processed
+          key: f1-data-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            f1-data-${{ runner.os }}-
+      - run: pip install -r requirements.txt
+      - run: python -m src.pipeline sync-calendar

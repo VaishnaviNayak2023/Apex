@@ -1,0 +1,29 @@
+{
+  "name": "f1-strategy-lab",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:all": "concurrently -k -n API,WEB \"python -m uvicorn api.main:app --reload --port 8000\" \"next dev --hostname 127.0.0.1 --port 3000\"",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "next": "^15.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "recharts": "^2.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "concurrently": "^10.0.6",
+    "typescript": "^5.7.0"
+  },
+  "overrides": {
+    "postcss": "^8.5.23"
+  }
+}

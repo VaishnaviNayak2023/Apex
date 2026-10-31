@@ -1,0 +1,51 @@
+name: Lock F1 pre-race predictions
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: f1-race-pipeline
+  cancel-in-progress: false
+
+jobs:
+  predict-due-races:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/cache@v4
+        with:
+          path: |
+            data/raw
+            data/processed
+          key: f1-data-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            f1-data-${{ runner.os }}-
+      - run: pip install -r requirements.txt
+      - run: python -m src.pipeline sync-calendar
+      - name: Lock predictions after qualifying
+        env:
+          F1_USERNAME: ${{ secrets.F1_USERNAME }}
+          F1_PASSWORD: ${{ secrets.F1_PASSWORD }}
+        run: python -m src.pipeline predict-due
+      - name: Publish locked ledger entries
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -d predictions/ledger ]; then
+            git add predictions/ledger
+          fi
+          if git diff --cached --quiet; then
+            echo "No new prediction files to publish."
+          else
+            git commit -m "Lock pre-race F1 prediction" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+            git push
+          fi

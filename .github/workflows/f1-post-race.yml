@@ -1,0 +1,52 @@
+name: Ingest and score F1 races
+
+on:
+  schedule:
+    - cron: "47 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: f1-race-pipeline
+  cancel-in-progress: false
+
+jobs:
+  score-finished-races:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/cache@v4
+        with:
+          path: |
+            data/raw
+            data/processed
+          key: f1-data-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            f1-data-${{ runner.os }}-
+      - run: pip install -r requirements.txt
+      - run: python -m src.pipeline sync-calendar
+      - name: Ingest published official race data
+        env:
+          F1_USERNAME: ${{ secrets.F1_USERNAME }}
+          F1_PASSWORD: ${{ secrets.F1_PASSWORD }}
+        run: python -m src.pipeline ingest-due
+      - run: python -m src.pipeline evaluate-due
+      - name: Publish scorecards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -d predictions/reports ]; then
+            git add predictions/reports
+          fi
+          if git diff --cached --quiet; then
+            echo "No new scorecards to publish."
+          else
+            git commit -m "Publish F1 post-race scorecard" -m "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+            git push
+          fi
