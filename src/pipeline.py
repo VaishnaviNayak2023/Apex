@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 
 from src.cleaning import clean_laps
-from src.data_loader import REAL_DATA_SOURCES, load_race
+from src.data_loader import REAL_DATA_SOURCES, fastf1_cache_dir, load_race
 from src.evaluate import chronological_backtest, score_prediction
 from src.features import add_features
 from src.race_registry import (
@@ -565,7 +565,7 @@ def ingest_actuals(
 
     import fastf1
 
-    fastf1.Cache.configure(cache_dir=str(PROJECT_ROOT / "data" / "raw"))
+    fastf1.Cache.configure(cache_dir=str(fastf1_cache_dir()))
     session = fastf1.get_session(race["year"], race["grand_prix"], "R")
     session.load(laps=True, telemetry=False, weather=True, messages=True)
     laps = session.laps.copy()

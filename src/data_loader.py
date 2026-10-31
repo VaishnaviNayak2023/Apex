@@ -67,10 +67,19 @@ def _demo_laps(total_laps: int = 57, drivers: int = 8) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def load_race(year: int, race: str, cache_dir: str | Path = "data/raw") -> pd.DataFrame:
-    """Load real laps from FastF1/OpenF1; synthetic laps require explicit opt-in."""
+def fastf1_cache_dir(cache_dir: str | Path | None = None) -> Path:
+    if cache_dir is None:
+        cache_dir = Path(os.environ.get("RACE_STORAGE_DIR", "data")) / "raw"
     cache_path = Path(cache_dir)
     cache_path.mkdir(parents=True, exist_ok=True)
+    return cache_path
+
+
+def load_race(
+    year: int, race: str, cache_dir: str | Path | None = None
+) -> pd.DataFrame:
+    """Load real laps from FastF1/OpenF1; synthetic laps require explicit opt-in."""
+    cache_path = fastf1_cache_dir(cache_dir)
     warnings: list[str] = []
     has_credentials = bool(
         os.environ.get("F1_USERNAME") and os.environ.get("F1_PASSWORD")

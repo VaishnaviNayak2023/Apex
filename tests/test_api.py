@@ -1,6 +1,9 @@
-from fastapi.testclient import TestClient
-
 from datetime import date
+import sys
+from types import SimpleNamespace
+
+from fastapi.testclient import TestClient
+import pandas as pd
 
 from api.main import app
 
@@ -13,6 +16,35 @@ def test_health_endpoint():
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
     assert response.json()["season"] == date.today().year
+
+
+def test_event_schedule_creates_fastf1_cache_directory(monkeypatch, tmp_path):
+    from api import main
+
+    cache_dir = tmp_path / "raw"
+    configured_dirs = []
+    fastf1 = SimpleNamespace(
+        Cache=SimpleNamespace(
+            configure=lambda cache_dir: configured_dirs.append(cache_dir)
+        ),
+        get_event_schedule=lambda _year, include_testing: (
+            pd.DataFrame({"EventName": ["Test Grand Prix"]})
+            if include_testing is False
+            else pd.DataFrame()
+        ),
+    )
+    monkeypatch.setenv("RACE_STORAGE_DIR", str(tmp_path))
+    monkeypatch.setitem(sys.modules, "fastf1", fastf1)
+    main._event_schedule.cache_clear()
+
+    try:
+        schedule = main._event_schedule(2026)
+    finally:
+        main._event_schedule.cache_clear()
+
+    assert not schedule.empty
+    assert cache_dir.is_dir()
+    assert configured_dirs == [str(cache_dir)]
 
 
 def test_dashboard_token_protects_api_but_not_health(monkeypatch):

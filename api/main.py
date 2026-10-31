@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from src.cleaning import clean_laps
-from src.data_loader import RealDataUnavailable, load_race
+from src.data_loader import RealDataUnavailable, fastf1_cache_dir, load_race
 from src.features import add_features
 from src.race_registry import (
     connect_registry,
@@ -68,7 +68,7 @@ async def require_dashboard_token(request, call_next):
 def _event_schedule(year: int) -> pd.DataFrame:
     import fastf1
 
-    fastf1.Cache.configure(cache_dir="data/raw")
+    fastf1.Cache.configure(cache_dir=str(fastf1_cache_dir()))
     schedule = fastf1.get_event_schedule(year, include_testing=False)
     if schedule.empty:
         raise ValueError(f"No Formula 1 Grand Prix schedule found for {year}.")
