@@ -11,6 +11,8 @@ data/processed/*
 models/*.joblib
 node_modules/
 .next/
+.tsupgrader/
 next-env.d.ts
+tsconfig.tsbuildinfo
 !data/raw/.gitkeep
 !data/processed/.gitkeep
